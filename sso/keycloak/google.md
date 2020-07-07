@@ -18,6 +18,12 @@ OAuth2.0을 사용하여 Google API에 액세스하는 모든 애플리케이션
 secret key와 client id를 기억해두도록 한다.
 ![clientid](./imgs/clientid.png)
 
+## keycloak 접근 (admin/admin)
+
+설치 방법을 참고하여(README.md) keycloak 설치
+![keycloakintro](./imgs/keycloakindex.png)
+
+
 ## new Realm 생성
 
 

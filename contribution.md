@@ -18,5 +18,26 @@ contribution의 내용들은 gitrepository에 있는 .git 을 참고한다는 �
 
 github 레포에 대한 기여도에 대해서 알아보겠다.
 
+github 프로필 기여도는 현지 시간대가 아닌 UTC 세계 협정 시간대에 따라 표시가된다. 그리고 특정 기준을 충족해야한다.
+
+## contribution counted
+
+커밋 조건
+
+커밋은 다음 조건은 **모두** 충족해야 contribution counted에 속한다.
+
+- issue 나 pull, fork 가아닌 독립형 레포지토리에서의 작업이 그래프에 보여진다.
+
+- commit에 사용하는 이메일 주소가 github에 연결되어야 한다.
+
+예를들면 나같은 경우에는 다음 명령어를 통해 .git에 내 아이디를 입력해주어야지 커밋시 contribution count에 적용이 된다는 것이다.
+
+```
+# git config --local user.email "league3236@gmail.com"
+```
+
+
+
+
 ## ref
 - https://docs.github.com/en/github/setting-up-and-managing-your-github-profile/why-are-my-contributions-not-showing-up-on-my-profile

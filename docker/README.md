@@ -52,6 +52,14 @@ docker run 시 아무 커멘드도 주지 않으면 실행되지만, 주게 되�
 
 docker run 실행시 실행되는 명령이라 생각 가능.
 
+## nvidia-docker2 설치
+
+nvidia-docker1은 k8s, docker-swarm등에서 작동할시 gpu device를 사용할 수 없는 문제가 발생한다.
+
+그로인하여 nvidia-docker2를 설치진행한다.
+
+
+
 ## ref
 
 - 문서 도커,쿠버네티스

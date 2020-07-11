@@ -26,7 +26,7 @@ secret key와 client id를 기억해두도록 한다.
 
 ## new Realm 생성
 
-real setting (enabled -> on)
+realm setting (enabled -> on)
 ![realmsetting](./imgs/realmsetting.png)
 
 ## identity provider 생성
@@ -36,12 +36,52 @@ social select를 "Google"로 선택하고
 
 ![identity](./imgs/identity.png)
 
+## redirect url 만들기
 
+로그인시 redirect할 url이 필요하였고
+docker container를 이용하여 간단한 nginx web을 띄어보았다.
 
+```bash
+$ docker run --name some-nginx -d -p 8081:80 nginx
+```
+
+localhost:8081로 접근하면 다음과 같은 화면이 보여진다.
+
+![nginx](./imgs/nginx.png)
+
+## Create Client Application
+
+new Client를 선택하고 나는 ClientID를 googledemo로 지정해주었다.
+
+enabled -> on으로 해주고
+
+client protocol을 openid-connect로 해준다.
+
+valid redirect URLs를 위에서 구현한 container url(sample nginx web)로 해준다.
+
+![googledemo](./imgs/googledemo.png)
 
 ## IDP 로그인 요청
 
+아래와 같이 설정해준다.
+>http://{keycloakip}:{keycloakport}/auth/realms/master/protocol/openid-connect/auth?response_type={response_type}&client_id={clientid}&state={randomvalue}
+
+
 http://localhost:8080/auth/realms/master/protocol/openid-connect/auth?response_type=code&client_id=googledemo&state=12345
+
+위의 링크로 접근하면(이때 로그아웃을 먼저 해주어야한다.)
+
+다음과 같은 화면을 확인가능하다
+
+![access](./imgs/access.png)
+
+우측을 보면 google 로그인이 생성되었고 로그인을 해보자.
+
+구글로 로그인을 하게 되면 redirect url로 지정한 페이지를 최종적으로 확인 가능하다.
+
+![nginxre](./imgs/nginxre.png)
+
+
 
 ## ref
 - http://www.mastertheboss.com/jboss-frameworks/keycloak/google-social-login-with-keycloak

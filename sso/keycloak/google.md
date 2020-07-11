@@ -26,6 +26,18 @@ secret key와 client id를 기억해두도록 한다.
 
 ## new Realm 생성
 
+real setting (enabled -> on)
+![realmsetting](./imgs/realmsetting.png)
+
+## identity provider 생성
+
+social select를 "Google"로 선택하고
+구글 인증 자격 증명 생성시 발급받았던 clientID, Client Secret을 사용하여 작성해준다.
+
+![identity](./imgs/identity.png)
+
+
+
 
 ## IDP 로그인 요청
 

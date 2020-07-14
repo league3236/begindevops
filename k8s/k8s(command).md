@@ -8,6 +8,13 @@ kubectl get nodes && \
 kubectl cluster-info
 ```
 
+- node 정보 get
+```
+$ kubeclt get nodes
+or
+$ kubectl describe nodes
+```
+
 - kubectl apply
 ```
 $ kubectl apply -f {yamlfile}

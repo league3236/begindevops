@@ -1,5 +1,10 @@
 # command list
 
+- name별 조회
+```
+$ kubectl ps -f name={imagename}
+```
+
 - image pull
 ```
 $ docker image pull {image}

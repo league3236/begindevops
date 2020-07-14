@@ -1,36 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: nginx-two-Deployment
+  name: nginx-two-deployment
 spec:
-    selector:
-        matchLabels:
-            app: nginx-two
-    replicas: 3
-    template:
-        metadata:
-            labels:
-                app: nginx-two
-        spec:
-            containers:
-              - name: nginx-two
-                image: nginx:1.17-alpine
-                ports:
-                - containerPort: 80
-                  name: nginx-pod-ports
+  selector:
+    matchLabels:
+      app: nginx-two
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-two
+    spec:
+      containers:
+      - name: nginx-two
+        image: nginx:1.17-alpine
+        ports:
+        - containerPort: 80
+          name: nginx-pod-port
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: nginx-two
-    labels:
-        app: nginx-two
+  name: nginx-two
+  labels:
+    app: nginx-two
 spec:
-    type: NodePort
-    ports:
-      - port: 80
-        targetPort: nginx-pod-port
-        nodePort: 31112
-        protocol: TCp
-    selector:
-        nginx-two
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: nginx-pod-port
+    nodePort: 31112
+    protocol: TCP
+  selector:
+    app: nginx-two

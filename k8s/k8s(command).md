@@ -1,5 +1,13 @@
 # k8s command
 
+- 간단 버전 체크
+```
+$ kubectl version --short && \
+kubectl get componentstatus && \
+kubectl get nodes && \
+kubectl cluster-info
+```
+
 - kubectl apply
 ```
 $ kubectl apply -f {yamlfile}
@@ -16,7 +24,13 @@ $ kubectl run {deployment name} --image {container image} --port=80
 
 example)
 
-$ kubectl run nginx-app --image nginx --port=80
+$ kubectl run nginx-app --image=nginx --port=80
+$ kubectl run nginx-one --image=nginx --generator=run-pod/v1 -- port=80
+```
+
+- expose할 service 생성
+```
+$ kubectl expose pod {PODNAME} --type=NodePort
 ```
 
 - deployment를 이용한 pod 늘리기

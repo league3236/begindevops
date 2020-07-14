@@ -32,3 +32,4 @@ host 장치에 접근할 수 있으며, host 컴퓨터 커널의 대부분의 �
 ```
 $ docker run --privileged [imagename] [otheroptions]
 ```
+

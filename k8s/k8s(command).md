@@ -29,6 +29,26 @@ $ kubectl scale deploy nginx-app --replicas=2
 $ kubectl get deployments
 ```
 
+- 모든 deployment 나열
+```
+$ kubectl get deployments --all-namespaces
+```
+
+- deployment 삭제
+```
+$ kubectl delete -n {NAMESPACE} deployment {DEPLOYMENT_NAME}
+
+example)
+
+$ kubectl get deployments --all-namespaces
+NAMESPACE     NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+default       nginx-deployment   1/1     1            1           13d
+kube-system   coredns            0/2     2            0           13d
+
+$ kubectl delete -n default deployment nginx-deployment
+deployment.apps "nginx-deployment" deleted
+```
+
 - 클러스터 노드 세부 정보
 ```
 $ kubectl get nodes -o wide

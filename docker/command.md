@@ -26,3 +26,9 @@ $ docker ps -a
 ```
 $ docker container prune
 ```
+
+- privileged mode
+host 장치에 접근할 수 있으며, host 컴퓨터 커널의 대부분의 기능을 할 수 있다.
+```
+$ docker run --privileged [imagename] [otheroptions]
+```

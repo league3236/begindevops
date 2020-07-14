@@ -9,7 +9,7 @@ spec:
     replicas: 3
     template:
         metadata:
-            lables:
+            labels:
                 app: nginx-two
         spec:
             containers:
@@ -23,7 +23,7 @@ apiVersion: v1
 kind: Service
 metadata:
     name: nginx-two
-    lables:
+    labels:
         app: nginx-two
 spec:
     type: NodePort

@@ -38,11 +38,18 @@ $ kubectl run nginx-one --image=nginx --generator=run-pod/v1 -- port=80
 - expose할 service 생성
 ```
 $ kubectl expose pod {PODNAME} --type=NodePort
+
+or deployment expose
+
+$ kubectl expose deployment {deploymentname} --external-ip="{externalip}" --port={externalport} --target-port={targetport}
 ```
 
 - deployment를 이용한 pod 늘리기
 ```
 $ kubectl scale deploy nginx-app --replicas=2
+
+or
+$ kubectl scale --replicas=2 deployment {deplymentname}
 ```
 
 - deployments 확인
@@ -136,6 +143,11 @@ $ kubeadm reset
 $ sudo apt-get purge kubeadm kubectl kubelet kubernetes-cni kube*
 $ sudo apt-get autoremove
 $ sudo rm -rf ~/.kube
+```
+
+- log 확인
+```
+kubectl logs -l app={appname}
 ```
 
 ## ref

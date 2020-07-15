@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: swarmpath
+spec:
+  containers:
+  - name: swarm-pod
+    imagePullPolicy: IfNotPresent
+    image: water_run:latest
+    volumeMounts:
+    - name: swarmpath
+      mountPath: /workspace/models
+  volumes:
+  - name : swarmpath
+    hostPath:
+      path: /home/swarm/models_araview_waterpool
+      type: Directory

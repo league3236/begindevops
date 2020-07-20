@@ -55,5 +55,4 @@ $ kubectl get pods
 service 시작
 ```
 $ kubectl create -f fronted-service.yaml
-$ kubectl get services
 ```

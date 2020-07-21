@@ -370,6 +370,38 @@ $kubectl taint nodes --all node-role.kubernetes.io/master-
     3. NVIDIA GPU with Architecture > Fermi(2.1)
     4. NVIDIA drivers ~= 361.93(untested on older versions)
 
+## RBAC(role-based access control)
+
+접근 권한 시스템이다. 각각의 리소스에 대해 유저별로 CRUD 스런 권한을 손쉽게 지정할 수 있다. 클러스터 전체에 적용하거나 특정 네임스페이스에 적용할 수 있다. AWS의 경우 IAM을 연동해서 사용할 수 있다.
+
+## CRD(Custom Resource Definitation)
+
+쿠버네티스가 제공하지 않는 기능을 기본 기능과 동일한 방식으로 적용하고 사용할 수 있다. 예를 들어, 쿠버네티스는 기본적으로 SSL 인증서 관리 기능을 제공하지 않지만, cert-manager를 설치하고 Certificate 리소스를 이용하면 익숙한 쿠버네티스 명령어로 인증서를 관리할 수 있다. 또 다른 도구, 방식을 익힐 필요 없이 다양한 기능을 손쉽게 확장할 수 있다.
+
+## Auto Scailning
+
+CPU, memory 사용량에 따른 확장은 기본이고 현재 접속자 수와 같은 값을 사용할 수 있다. 컨테이너 개수를 조정하는 Horizontal Pod Autoscaler(HPA), 컨테이너의 리소스 할당량을 조정하는 Vertical Pod Autoscaler(VPA), 서버 개수를 조정하는 Cluseter Autoscaler(CA) 방식이 있다.
+
+## Federation, Multi Cluster
+
+클라우드에 설치한 쿠버네티스 클러스터와 자체 서버에 설치한 쿠버네티스를 묶어서 하나로 사용할 수 있다.
+구글에서 발표한 Anthos를 이용하면 한 곳에서 여러 클라우드의 여러 클러스터를 관리할 수 있다.
+
+## Kubernetes Object
+ 
+쿠버네티스는 상태를 관리하기 위한 대상을 오브젝트로 정의한다. 
+기본으로 수십 가지 오브젝트를 제공하고 새로운 오브젝트를 추가하기가 매우 쉽기 때문에 확장성이 좋다.
+
+## Kubectl 
+
+API 서버는 json 또는 protobuf 형식을 이용한 http 통신을 지원한다. 이 방식을 그대로 쓰면 불편하므로 보통 **kubectl** 이라는 명령행 도구를 사용한다.
+
+## API 서버 kube-apiserver
+
+API 서버는 모든 요청을 처리하는 마스터 핵심 모듈이다. kubectl의 요청뿐 아니라 내부 모듈의 요청도 처리하며 권한을 체크하여 요청을 거불할 수 있다. 실제로 하는 일은 원하는 상태를 key-value 저장소에 저장하고 저장된 상태를 조회하는 매우 단순한 적입이다. 
+pod를 노드에 할당하고 상태를 체크하는 일은 다른 모듈로 분리되어있다.
+노드에서 실행 중인 컨테이너의 로그를 보여주고 명령을 보내는 등 디버거 역할도 수행한다.
+
 
 
 ## ref
@@ -379,3 +411,4 @@ $kubectl taint nodes --all node-role.kubernetes.io/master-
 - https://likefree.tistory.com/15
 - https://www.katacoda.com/javajon/courses/kubernetes-applications/nginx
 - https://waspro.tistory.com/582
+- https://subicura.com/2019/05/19/kubernetes-basic-1.html

@@ -8,7 +8,7 @@
   $sed -i '2s/^/#/' /etc/fstab
   or
   $swapoff -a && sed -i '/swap/d' /etc/fstab
-  ```
+```
 
 ## ubuntu
 

@@ -99,13 +99,6 @@ VPC를 만들었다면 서브넷을 만들 수 있다. 서브넷은 VPC를 잘�
 
 서브넷을 위한 라우팅 테이블이다 . 서브넷의 네트워크 트래픽을 설정하는데 쓰인다. 라우팅 테이블을 통해 서브넷을 internet gateway와 연결시킬수도 있고 nat과 연결시킬수도 있다.
 
-
-
-
-
-
-
-
 - instance_type
 ec2 인스턴스 타입은 각기 다른 cpu, 메모리, 디스크 용량, 네트워크 수용량을 가지고 있는데 t2.micro에 따른 자원 량을 지정한다.
 
@@ -133,9 +126,87 @@ $ terraform apply
 VPN은 한국어로 "가상사설망"이라고 한다.
 "가상"이라는 단어에서 알 수 있듯 실제 사설망이 아닌 **가상의 사설망이다.** 보안상의 이유로 직원간 네트워크를 분리하고 싶다면 기존 인터넷선 선공사도 다시해야하고 건물의 내부선을 뜯어고쳐야하며 다시 전용선을 깔아야 하는데, 이를 위해 가상의 망 VPN을 사용하게 된다.
 
+```
+resource "aws_vpc" "dmz" {
+  cidr_block           = "10.1.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+
+  tags { Name = "DMZ" }
+}
+
+resource "aws_vpc" "application" {
+  cidr_block           = "10.2.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+
+  tags { Name = "Application" }
+}
+```
+
+cidr_block을 선택할맞추어서때는 구현할 네트워크 아키텍쳐에 맞추어서 범위를 미계산해서 설정해야한다. 기본적으로 VPC의 cidr block은 private이기 때문에 서로 다른 vpc가 동일한 cidr block을 가질 수 있지만 그렇게 되면 vpc peering connection을 설정할 수 없게된다. 그러므로 서로 연결된 vpc 끼리는 다른 cidr blcok범위를 설정해줘야한다.
+
+그 후 각 VPC에 subnet들을 생성한다. DMZ VPC에는 public 서브넷만 구현하고 Application VPC에는 public 서브넷과 private 서브넷을 구현한다.
+
+```
+# DMZ Public Subnets
+resource "aws_subnet" "dmz_public_1a" {
+	vpc_id            = "${aws_vpc.dmz.id}"
+	cidr_block        = "10.1.1.0/24"
+	availability_zone = "ap-northeast-1a"
+
+	tags { Name = "Frontend Public Subnet 1A" }
+}
+
+resource "aws_subnet" "dmz_public_1c" {
+	vpc_id            = "${aws_vpc.dmz.id}"
+	cidr_block        = "10.1.2.0/24"
+	availability_zone = "ap-northeast-1c"
+
+  	tags { Name = "Frontend Public Subnet 1C" }
+}
+
+# Application Public Subnets
+resource "aws_subnet" "application_public_1a" {
+	vpc_id            = "${aws_vpc.application.id}"
+	cidr_block        = "10.2.1.0/24"
+	availability_zone = "ap-northeast-1a"
+
+	tags { Name = "Arontend Public Subnet 1A" }
+}
+
+resource "aws_subnet" "application_public_1c" {
+	vpc_id            = "${aws_vpc.application.id}"
+	cidr_block        = "10.2.2.0/24"
+	availability_zone = "ap-northeast-1c"
+
+  	tags { Name = "Application Public Subnet 1C" }
+}
+
+# Application Private Subnets
+resource "aws_subnet" "application_private_1a" {
+	vpc_id            = "${aws_vpc.application.id}"
+	cidr_block        = "10.2.3.0/24"
+	availability_zone = "ap-northeast-1a"
+
+	tags { Name = "Arontend Private Subnet 1A" }
+}
+
+resource "aws_subnet" "application_private_1c" {
+	vpc_id            = "${aws_vpc.application.id}"
+	cidr_block        = "10.2.4.0/24"
+	availability_zone = "ap-northeast-1c"
+
+  	tags { Name = "Application Private Subnet 1C" }
+}
+```
+
+
+
 ## ref
 - https://www.44bits.io/ko/post/terraform_introduction_infrastrucute_as_code
 - Terraform UP & Running 발췌
 - https://medium.com/harrythegreat/aws-%EA%B0%80%EC%9E%A5%EC%89%BD%EA%B2%8C-vpc-%EA%B0%9C%EB%85%90%EC%9E%A1%EA%B8%B0-71eef95a7098
 - https://brownbears.tistory.com/195
 - https://blog.outsider.ne.kr/1301
+- https://rampart81.github.io/post/vpc_confing_terraform/

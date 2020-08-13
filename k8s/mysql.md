@@ -76,11 +76,18 @@ PV의 라이프싸이클
 
 PV는 생성이 되면, Available 상태가 된다. 이 상태에서 PVC에 바인딩이 되면 Bound 상태로 바뀌고 사용이 되며, 바인딩된 PVC가 삭제되면, PV가 삭제되는 것이 아니라 Relesed 상태가 된다.
 
-
 persistent volume 생성 요청
+
 ```
 $ kubectl apply -f mysql-pv.yaml
 ```
+
+- Dynamic Provisioning
+
+앞에서 본것과 같이 PV를 수동으로 생성한 후 PVC에 바인딩 한 후에, Pod에서 사용할 수 있지만, 쿠버네티스 1.6에서 부터 Dynamic Provisioning(동적 생성) 기능을 지원한다.
+
+이 동적 생성 기능은 시스템 관리자가 별도로 디스크를 생성하고 PV를 생성할 필요 없이 PVC만 정의하면 이에 맞는 물리 디스크 생성 및 PV 생성을 자동화해주는 기능이다.
+
 
 ### mysql pod 생성
 

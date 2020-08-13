@@ -1,17 +1,32 @@
-from flask import Flask
+from flask import Flask, jsonify, request
+from sqlalchemy import create_engine, text
 
 app = Flask(__name__)
-@app.route("/")
-def hello():                           
-    return "<h1>Hello World!</h1>"
+app.config.from_pyfile('config.py')
 
-@app.route("/hello")
-def hello_flask():
-    return "<h1>Hello Flash!</h1>"
+database = create_engine(app.config['DB_URL'], encoding = "utf-8")
+app.database = database
 
-@app.route("/first")
-def hello_first():
-    return "<h3>Hello First</h3>"
 
-if __name__ == "__main__":              
+@app.route("/professor", methods = ['POST'])
+def insertdb():
+    professor = request.json
+    professor = app.database.execute(text("""
+                                            INSERT INTO professor (
+                                            name,
+                                            belong,
+                                            phone
+                                           ) VALUES (
+                                            :name,
+                                            :belong,
+                                            :phone
+                                           )
+                                            """), professor).lastrowid
+    return "<h1>Insert DB POST API</h1>"
+
+@app.route("/professor", methods = ['GET'])
+def getinsertdb():
+    return "<h1>Insert DB GET API</h1>"
+
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port="8080")

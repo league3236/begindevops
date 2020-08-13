@@ -217,7 +217,160 @@ mysql> select * from professor;
 
 ## app.py를 수정하여 데이터를 삽입하는 flask 만들기
 
+mysql 연동 가능한 모듈 설치
+```
+$ pip3 install sqlalchemy
+$ pip3 install mysql-connector-python
+```
+
+config.py 작성
+```
+db = {
+    'user'     : 'leaguecat',
+    'password' : '1234',
+    'host'     : '127.0.0.1',
+    'port'     : '3306',
+    'database' : 'study_db'
+}
+
+DB_URL = f"mysql+mysqlconnector://{db['user']}:{db['password']}@{db['host']}:{db['port']}/{db['database']}?charset=utf8"
+```
+
+app.py 수정
+```
+from flask import Flask, jsonify, request
+from sqlalchemy import create_engine, text
+
+app = Flask(__name__)
+app.config.from_pyfile('config.py')
+
+database = create_engine(app.config['DB_URL'], encoding = "utf-8")
+app.database = database
+
+
+@app.route("/professor", methods = ['POST'])
+def insertdb():
+    professor = request.json
+    professor = app.database.execute(text("""
+                                            INSERT INTO professor (
+                                            name,
+                                            belong,
+                                            phone
+                                           ) VALUES (
+                                            :name,
+                                            :belong,
+                                            :phone
+                                           )
+                                            """), professor).lastrowid
+    return "<h1>Insert DB POST API</h1>"
+
+@app.route("/professor", methods = ['GET'])
+def getinsertdb():
+    return "<h1>Insert DB GET API</h1>"
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port="8080")
+```
+
+curl 요청 하여 db에 저장
+```
+$ curl --location --request POST '10.231.238.45:8080/professor' \
+--header 'Content-Type: application/json' \
+--data-raw '{"name":"김창식", "belong":"RES", "phone":"01012341234"}'
+```
+
+다시 db로 접근해서 확인하면 insert가 된것을 확인할 수 있다
+
+```
+mysql> select * from professor;
++-----+-----------+--------+-------------+
+| _id | name      | belong | phone       |
++-----+-----------+--------+-------------+
+|   1 | 유재석    | IDE    | 01112345678 |
+|   2 | 황영조    | MSE    | 01121342443 |
+|   3 | 김창식    | RES    | 01012341234 |
++-----+-----------+--------+-------------+
+```
+
+## 구성한 app.py를 dockerfile로 만들어서 이미지화
+
+requirements.txt 작성
+
+vim requirements.txt
+```
+Flask==1.1.1
+mysql-connector-python==8.0.21
+sqlalchemy
+```
+
+flask용 dockerfile 작성
+
+vim Dockerfile
+```
+FROM python:3.7
+WORKDIR /usr/src/app
+COPY ["requirements.txt", "app.py", "config.py", "./"]
+RUN pip install --no-cache-dir -r requirements.txt
+CMD [ "python", "./app.py" ]
+```
+
+dockerfile build 후 이미지 화
+
+```
+$ docker build -t flask-connect-mysql:latest .
+```
+
+생성된 image 를 컨테이너화해서 띄우기
+
+```
+$ docker run --name flask-connect-mysql -d -p 8080:8080 flask-connect-mysql:latest
+```
+
+flask container 로그 확인
+```
+$ docker logs flask-connect-mysql
+
+
+ * Serving Flask app "app" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
+```
+
+위와 같이 컨테이너 환경에서도 잘 돌아가는 것을 확인할 수 있다. 
+이제 똑같이 post 요청을 날려 mysql에 데이터가 잘 적제되는 것을 확인해보자
+
+curl 요청 하여 db에 저장
+```
+$ curl --location --request POST '10.231.238.45:8080/professor' \
+--header 'Content-Type: application/json' \
+--data-raw '{"name":"호냥캣", "belong":"CAT", "phone":"01012341234"}'
+```
+
+다시 db로 접근해서 확인하면 insert가 된것을 확인할 수 있다
+
+```
+mysql> select * from professor
+    -> ;
++-----+-----------+--------+-------------+
+| _id | name      | belong | phone       |
++-----+-----------+--------+-------------+
+|   1 | 유재석    | IDE    | 01112345678 |
+|   2 | 황영조    | MSE    | 01121342443 |
+|   3 | 김창식    | RES    | 01012341234 |
+|   4 | 김창식    | RES    | 01012341234 |
+|   5 | 호냥캣    | CAT    | 01012341234 |
++-----+-----------+--------+-------------+
+```
+
+귀여운 우리 호냥캣캣캣이 들어간것을 확인할 수 있다. 호냥캣캣캣
+
+
+
 ## REF
 
 - https://futurists.tistory.com/11 [미래학자]
 - https://velog.io/@sungjun-jin/TIL-0524-Flask-mysql-%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0
+- https://github.com/darkmavis1980/flask-python-3-docker

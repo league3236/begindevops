@@ -88,6 +88,19 @@ $ kubectl apply -f mysql-pv.yaml
 
 이 동적 생성 기능은 시스템 관리자가 별도로 디스크를 생성하고 PV를 생성할 필요 없이 PVC만 정의하면 이에 맞는 물리 디스크 생성 및 PV 생성을 자동화해주는 기능이다.
 
+만들어진 pv와 pvc 확인
+
+```
+$ kubectl get pv
+
+NAME              CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                    STORAGECLASS   REASON   AGE
+mysql-pv-volume   20Gi       RWO            Retain           Bound    default/mysql-pv-claim   manual                  136m
+
+$ kubectl get pvc
+NAME             STATUS   VOLUME            CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+mysql-pv-claim   Bound    mysql-pv-volume   20Gi       RWO            manual         136m
+```
+
 
 ### mysql pod 생성
 
@@ -123,14 +136,16 @@ spec:
       labels:
         app: mymysql
     spec:
-      nodeName: kube-node-1
+      # nodeName: kube-node-1
       containers:
       - image: mysql/mysql-server:8.0
         name: mymysql
         env:
           # Use secret in real usage
         - name: MYSQL_ROOT_PASSWORD
-          value: password
+          value: '1234'
+        - name: MYSQL_ONETIME_PASSWORD
+          value: false
         ports:
         - containerPort: 3306
           name: mymysql
@@ -147,6 +162,14 @@ mysql pod 배포
 
 ```
 $ kubectl apply -f mymysql.yaml
+```
+
+## 접근
+
+mysql pod에 bash를 이용해서 접근
+
+```
+$ kubectl exec -it {podname} -- bash
 ```
 
 

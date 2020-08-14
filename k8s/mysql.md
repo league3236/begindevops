@@ -138,7 +138,7 @@ spec:
     spec:
       # nodeName: kube-node-1
       containers:
-      - image: mysql/mysql-server:8.0
+      - image: mysql:5.6
         name: mymysql
         env:
           # Use secret in real usage
@@ -170,6 +170,122 @@ mysql pod에 bash를 이용해서 접근
 
 ```
 $ kubectl exec -it {podname} -- bash
+```
+
+mysql에 접근 (컨테이너 내부 password 1234) 
+
+```
+$ mysql -u root -p
+Enter password:
+```
+
+test라는 데이터베이스 생성
+
+```
+mysql> CREATE DATABASE test;
+Query OK, 1 row affected (0.00 sec)
+```
+
+데이터베이스 사용
+
+```
+mysql> USE test
+Database changed
+```
+
+dept 테이블 생성
+
+```
+mysql> CREATE TABLE dept (
+    dept_no INT(11) unsigned NOT NULL,
+    dept_name VARCHAR(32) NOT NULL,
+    PRIMARY KEY (dept_no)
+    );
+
+    Query OK, 0 rows affected (0.06 sec)
+```
+
+mysql 종료 
+
+```
+$ exit
+```
+
+container 빠져나오기
+ctrl + p + q
+
+## 볼륨 유지상태 확인
+
+mymysql pod 삭제
+
+```
+$ kubectl delete -f mymysql.yaml
+```
+
+다시 pod 띄우기
+
+```
+$ kubectl create -f mymysql.yaml
+```
+
+만든 pods 접근
+
+```
+$ kubectl exec -it mymysql-6d6dc996f6-lqm75 -- bash
+```
+
+접근한 pod에서 mysql 만든 db 존재유무 확인
+
+```
+$ mysql -u root -p 
+```
+
+아래와 같이 만들었던 test라는 데이터베이스가 있으면 PV, PVC가 성공적으로 작동된 것
+
+```
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| test               |
++--------------------+
+4 rows in set (0.00 sec)
+```
+
+이제 외부에서 접근가능하도록 포트포워딩을 해보자
+
+```
+$ kubectl port-forward 'mysql pod 이름' 3306:3306 --address 0.0.0.0
+
+example 
+
+kubectl port-forward mymysql-6d6dc996f6-lqm75 3306:3306 --address 0.0.0.0
+
+Forwarding from 0.0.0.0:3306 -> 3306
+```
+
+서버를 하나 더 띄워서 접근해보자
+
+```
+$ mysql -u root -h {kube master ip} -p
+
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 2
+Server version: 5.6.49
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
 ```
 
 

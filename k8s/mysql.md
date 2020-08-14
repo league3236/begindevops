@@ -144,8 +144,6 @@ spec:
           # Use secret in real usage
         - name: MYSQL_ROOT_PASSWORD
           value: '1234'
-        - name: MYSQL_ONETIME_PASSWORD
-          value: false
         ports:
         - containerPort: 3306
           name: mymysql
@@ -288,6 +286,13 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 mysql>
 ```
 
+접근되는것을 확인했다.
+
+## port-forswarding yaml을 통해 설정하기
+
+```
+
+```
 
 
 ## ref

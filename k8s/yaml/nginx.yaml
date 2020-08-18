@@ -30,7 +30,7 @@ spec:
   ports:
   - port: 80
     targetPort: nginx-pod-port
-    nodePort: 31112
+    nodePort: 30080
     protocol: TCP
   selector:
     app: nginx-two

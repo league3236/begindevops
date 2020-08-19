@@ -22,5 +22,63 @@ ip로 통신하도록 되어있다면 한곳에 세팅해놨던 yaml 파일을 �
 
 특정 pod에 접근하는 도메인은 다음처럼 구성된다.
 default 네임스페이스에 속한 **cpod(10.10.10.10)**이라는 이름의 pod에 대한 도메인은 다음처럼 구성된다.
+
 **10-10-10-10.default**
+
+IP인 10.10.10.10에서 .을 -로 변경해서 사용하고 네임스페이스 이름인 default와 연결한 뒤에 pod.cluster.local을 붙여주면된다. 하지만 이렇게 하면 포드의 ip를 그대로 사용해야 하니깐 도메인 네임을 사용하는 장점이 사라지게 된다. 그래서 다른 방법을 사용할 수 있다. 포드를 실행할때 spec에 hostname와 subdomain을 지정해서 사용할 수 있다. 다음처럼 예제 yaml을 살펴보자. spec에 hostname와 subdomain을 지정한다.
+
+
+vim testdns.yaml
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-simple-app
+  labels:
+    app: kubernetes-simple-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubernetes-simple-app
+  template:
+    metadata:
+      labels:
+        app: kubernetes-simple-app
+    spec:
+      hostname: appname
+      subdomain: default-subdomain
+      containers:
+      - name: kubernetes-simple-app
+        image: arisu1000/simple-container-app:latest
+        ports:
+        - containerPort: 8080
+```
+
+이런 경우 이 포드에 접근할 수 있는 도메인은 appname-default-subdomain.default.svc.cluster.local으로 생성된다. hostname인 appname와 subdomain인 default-subdomain을 앞에 사용하고 네임스페인스인 default를 붙여준다음에 .svc.cluster.local을 붙여준다. 여기서 눈여겨봐야할점은 마지막에 붙인 .svc.cluster.local이 pod가 아니라 svc로 시작한다는 점이다.
+
+해당 도메인을 사용하여 접근이 가능한지 살펴보자
+
+```
+$ kubectl apply -f testdns.yaml
+
+
+$ kubectl get pods
+
+NAME                                     READY   STATUS              RESTARTS   AGE
+kubernetes-simple-app-55f6884cbb-rrw9z   0/1     ContainerCreating   0          3s
+mymysql-8dddc55d6-z4pn9                  1/1     Running             0          5h13m
+nginx-deployment-6bdf6857b5-dcr76        1/1     Running             0          35m
+
+아래에서 에러가 발생한다..
+
+
+$ kubectl exec kubernetes-simple-app-6695c7b497-wnz4g -- nslookup appname.default-subdomain.default.svc.cluster.local
+nslookup: can't resolve '(null)': Name does not resolve
+
+nslookup: can't resolve 'appname.default-subdomain.default.svc.cluster.local': Try again
+
+
+```
 

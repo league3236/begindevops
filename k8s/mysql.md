@@ -291,7 +291,50 @@ mysql>
 ## port-forswarding yaml을 통해 설정하기
 
 ```
-
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-cluster-ip-service
+spec:
+  clusterIP: 10.101.204.217
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mymysql
+spec:
+  selector:
+    matchLabels:
+      app: mymysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mymysql
+    spec:
+      # nodeName: kube-node-1
+      containers:
+      - image: mysql:5.6
+        name: mymysql
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: '1234'
+        ports:
+        - containerPort: 3306
+          name: mymysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
 ```
 
 

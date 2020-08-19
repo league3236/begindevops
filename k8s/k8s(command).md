@@ -35,6 +35,11 @@ $ kubectl run nginx-app --image=nginx --port=80
 $ kubectl run nginx-one --image=nginx --generator=run-pod/v1 -- port=80
 ```
 
+- kubectl create를 통한 deployment 실행
+```
+$ kubectl create deployment nginx-app --image nginx
+```
+
 - expose할 service 생성
 ```
 $ kubectl expose pod {PODNAME} --type=NodePort

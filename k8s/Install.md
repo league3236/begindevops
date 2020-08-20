@@ -102,11 +102,11 @@ $docker info | grep -i cgroup
 
 ### kubeadm init(master node)
 ```
-$sudo kubeadm init --pod-network-cidr 192.168.0.0/16 --service-cidr 10.96.0.0/12 --service-dns-domain "k8s" --apiserver-advertise-address {master ip}
+$sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address {master ip}
 
 or
 
-sudo kubeadm init --control-plane-endpoint {masterip}:6443 --pod-network-cidr 192.168.0.0/16 --service-cidr 10.96.0.0/12 --service-dns-domain "k8s" --upload-certs --apiserver-advertise-address {masterip}
+sudo kubeadm init --control-plane-endpoint {masterip}:6443 --pod-network-cidr=10.244.0.0/16 --upload-certs --apiserver-advertise-address {masterip}
 
 sudo kubeadm init --control-plane-endpoint apisvr.hoya.com:6443 --upload-certs
 ```
@@ -129,6 +129,7 @@ $sudo chown $(id -u):$(id -g) $HOME/.kube/config
 master node가 초기화 된 다음에 pod 같의 통신을 위해서 pod network를 추가해 주어야 한다.
 ```
 $sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
 ```
 
 ### 클러스터 노드 정보 확인(master node)

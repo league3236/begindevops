@@ -139,8 +139,39 @@ options ndots:5
 
 **search default.svc.k8s svc.k8s k8s**
 
-이부분이 왜 변경되어있는지 알아보자.
+이부분을 한번 변경해보자
+다음과 같이 dns 설정을 바꾸는것이 가능하다
 
+$ vim dnsutils.yaml
 
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dnsutils
+  namespace: default
+spec:
+  containers:
+  - name: dnsutils
+    image: gcr.io/kubernetes-e2e-test-images/dnsutils:1.3
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always
+  dnsPolicy: ClusterFirst
+  dnsConfig:
+    nameservers:
+    - 8.8.8.8
+    searches:
+    - default.svc.cluster.local
+    - svc.cluster.local
+    - cluster.local
+```
+
+실행
+```
+$ kubectl create -f dnsutils.yaml
+```
 
 

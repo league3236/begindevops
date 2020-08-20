@@ -78,7 +78,69 @@ $ kubectl exec kubernetes-simple-app-6695c7b497-wnz4g -- nslookup appname.defaul
 nslookup: can't resolve '(null)': Name does not resolve
 
 nslookup: can't resolve 'appname.default-subdomain.default.svc.cluster.local': Try again
+```
 
+원인 찾기
+
+아래와 같이 정상적인 cluster pod안에 dns 설정부를 확인해보았다(katacoda playground)
+```
+master $ kubectl exec -it {PodName} -- nslookup kubernetes.default
+
+example)
+
+master $ kubectl exec -it kubernetes-simple-app-6695c7b497-q92cj -- nslookup kubernetes.default
+nslookup: can't resolve '(null)': Name does not resolve
+
+Name:      kubernetes.default
+Address 1: 10.96.0.1 kubernetes.default.svc.cluster.local
+```
+
+안되는 내 cluster에서는 위와 같이 응답이 나오지 않았고
+
+pod의 ip를 찾아 직접적으로 nslookup을 해보았다
 
 ```
+$ kubectl get pods -o wide
+NAME                                     READY   STATUS    RESTARTS   AGE    IP             NODE               NOMINATED NODE   READINESS GATES
+kubernetes-simple-app-6695c7b497-qcmrf   1/1     Running   0          178m   192.168.1.35   {nodehost}   <none>           <none>
+
+$ kubectl exec -it kubernetes-simple-app-6695c7b497-qcmrf -- nslookup 192.168.1.35
+nslookup: can't resolve '(null)': Name does not resolve
+
+Name:      192.168.1.35
+Address 1: 192.168.1.35 appname.default-subdomain.default.svc.k8s
+```
+
+appname.default-subdomain.default.svc.k8s
+
+끝부분이 .default.svc.k8s 되어있다.
+
+resolve.conf를 확인해보자
+
+정상적인 cluster에서는 resolv.conf는 아래와 같이 되어있다
+
+```
+$ kubectl exec {pod name} cat /etc/resolv.conf
+nameserver 10.96.0.10
+nameserver 8.8.8.8
+search default.svc.cluster.local svc.cluster.local cluster.local
+```
+
+그러나 내가 구성한 클러스터는 아래와 같이 설정되어있다.
+
+```
+$ kubectl exec -it kubernetes-simple-app-6695c7b497-qcmrf -- cat /etc/resolv.conf
+
+
+nameserver 10.96.0.10
+search default.svc.k8s svc.k8s k8s
+options ndots:5
+```
+
+**search default.svc.k8s svc.k8s k8s**
+
+이부분이 왜 변경되어있는지 알아보자.
+
+
+
 

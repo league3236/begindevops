@@ -174,4 +174,23 @@ spec:
 $ kubectl create -f dnsutils.yaml
 ```
 
+확인
+```
+$ kubectl exec -i -t dnsutils -- nslookup kubernetes.default
+```
 
+이래도 안되는구나..
+
+확인해보니 
+kubeadm init 부분이 잘못설정되어있었다
+
+아래 내용을
+```
+$sudo kubeadm init --pod-network-cidr 192.168.0.0/16 --service-cidr 10.96.0.0/12 --service-dns-domain "k8s" --apiserver-advertise-address {swarm-master-01 ip}
+```
+
+아래로 바꾸어서 reset후 k8s 구성을 다시 진행하였다...;;
+
+```
+$sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address {master ip}
+```

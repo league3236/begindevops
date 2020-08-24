@@ -192,5 +192,12 @@ $sudo kubeadm init --pod-network-cidr 192.168.0.0/16 --service-cidr 10.96.0.0/12
 아래로 바꾸어서 reset후 k8s 구성을 다시 진행하였다...;;
 
 ```
-$sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address {master ip}
+$sudo kubeadm init --apiserver-advertise-address {master ip}
 ```
+
+다시 띄우고
+```
+$ kubectl create -f dnsutils.yaml
+```
+
+다시 재확인

@@ -201,3 +201,23 @@ $ kubectl create -f dnsutils.yaml
 ```
 
 다시 재확인
+```
+$ kubectl get pods
+
+NAME                                     READY   STATUS    RESTARTS   AGE
+kubernetes-simple-app-6695c7b497-hxp2d   1/1     Running   0          3m
+```
+
+정상 작동
+
+```
+$ kubectl exec -it kubernetes-simple-app-6695c7b497-hxp2d -- nslookup appname.default-subdomain.default.svc.cluster.local
+```
+
+nslookup을 통해서 mysql pod 접속가능한지 확인해보기
+
+./mysql.md를 통해서 작업 후 실행
+
+```
+
+```

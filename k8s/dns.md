@@ -219,5 +219,20 @@ nslookup을 통해서 mysql pod 접속가능한지 확인해보기
 ./mysql.md를 통해서 작업 후 실행
 
 ```
+# kubectl get service -o wide
+NAME                       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE    SELECTOR
+kubernetes                 ClusterIP   10.96.0.1      <none>        443/TCP          41m    <none>
+mysql-cluster-ip-service   NodePort    10.105.17.80   <none>        3306:30006/TCP   3m5s   app=mysql
+```
+
+mysql-cluster-ip-service.default.svc.cluster.local 로 요청 보내보자
 
 ```
+$ kubectl exec -it kubernetes-simple-app-6695c7b497-hxp2d -- nslookup mysql-cluster-ip-service.default.svc.cluster.local
+nslookup: can't resolve '(null)': Name does not resolve
+
+nslookup: can't resolve 'mysql-cluster-ip-service.default.svc.cluster.local': Try again
+command terminated with exit code 1
+```
+
+이슈 파악중 08/26

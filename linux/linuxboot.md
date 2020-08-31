@@ -1,6 +1,8 @@
 # ref 
 - https://ttend.tistory.com/61
 - https://treeroad.tistory.com/entry/ROM-BIOS-%EB%9E%80
+- https://intgeek.tistory.com/5
+- http://egloos.zum.com/light99/v/5134237
 
 # 리눅스가 부팅될 때의 프로세스 정리
 
@@ -39,6 +41,27 @@ RAM(=Random Access Memory) 란 어느 위치에 저장된 데이터든지 접근
 
 4. GRUB 작동
 
+- GRUB(Grand Unified Boot Loader)란? 
+
+GRUB은 GNU에서 만든 부트로더로 LILO(Linux Loader) 보다 발전된 형태로 리눅스의 기본 부트로더로 쓰입니다.
+
+- 부팅과정에서 grub의 역활
+
+전원을 킴과 동시에 ROM-BIOS는 post(하드웨어 점검)을 실행하고, MBR영역에서 부트로더를 로딩한다.
+
+Grub은 부팅메뉴를 선택받고, 선택된 커널을 로딩한다. 그리고 스와퍼(Swapper) 프로세스를 실행한다.
+
+실행된 스와퍼(Swapper)는 앞단계에서 인식했던 각 장치들의 드라이브를 초기화 시킨 다음, init 프로세스를 실행 후 스와퍼(Swapper)는 종료된다.
+(Swapper: PID 0) 종료 후 (init: PID 1) 실행됨. 모든 프로세스의 부모프로세스로 init 프로세스가 됨
+
+init은 /etc/inittab 이라는 설정 파일을 읽어 실행한다. (설정된 (0부터 6까지) 부팅 레벨을 선택)
+
+/etc/rc.d/rc.sysinit 스크립트 파일을 실행 (부팅레벨에 상관없이 꼭 한번씩 실행되는 파일)
+
+선택된 부팅 레벨(N)에 따라서 /etc/rc.d/rcN.d/디렉토리의 스크립트를 순차적으로 실행한다. (부팅시 자동 실행하는 데몬)
+
+시스템매직키 설정, 시스템 전원공급 설정, 가상터미널과 로그인창 실행
+
 5. 커널 이미지 적재
 
 부트로더에서 리눅스가 선택되면 커널 이미지(/boot/vmlinuz-버전)가 작동한다.
@@ -54,8 +77,11 @@ $ cat /var/log/dmesg
 
 6. 파일 시스템 마운트
 
+커널은 루트 파일시스템을 마운트하는데, 이때 부트로더의 설정파일(/boot/grub/menu.lst)에 있는 root= 옵션으로 명시된파티션을 루트 파일 시스템으로 마운트 시킨다.
 
+이때 루트 파티션이 잘못 지정되어 있거나, 루트 파티션이 변경되었음에도 이 정보가 갱신되지 않았을 때 커널에서 파일 시스템 마운트 과정이 실패하고 결국 패닉에러를 보이며 부팅이 실패한다.
 
 7. 시스템 초기화 프로그램(init) 작동
+
 
 8. 로그인

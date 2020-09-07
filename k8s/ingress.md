@@ -88,6 +88,11 @@ Ingress Controller를 직접 운영할지, 클라우드 플랫폼에 위임할�
 
 만약 AWS에서 EKS 또는 EC2 기반의 Kubespray를 사용하고 있다면, Nginx Ingress Controller를 직접 생성해 사용하되, 외부에서 Nginx에 접근하기 위한 쿠버네티스 Service를 Load Balancer 타입으로 설정해 Load Balancer를 생성하는 방법을 생각해 볼 수 있다. 이 때, ELB / NLB / ALB 중 어느 로드 밸런서를 
 
+- Quick Start
+
+on-premise 환경에서 쿠버네티스를 설치하였음을 가정한다. 클라우드 플랫폼에 종속적인 기능 (ELB, EBS 등) 을 사용하지 않음을 전제로 한다.
+
+
 
 
 

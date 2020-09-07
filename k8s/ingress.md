@@ -1,4 +1,28 @@
 
+# service 
+
+일반적으로 ingress를 알기전에 service 라는 개념부터 알아야한다.
+서비스는 쿠버네티스 클러스터 안에서 파드의 집합에 대한 경로나 service discovery를 제공하는 리소스다. 서비스의 대상이 되는 pod는 서비스에서 정의하는 label selector로 정해진다.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-service
+spec:
+  selector:
+    app: springboot-web
+  ports:
+  - port: 80
+    protoco: TCP
+    targetPort: 8080
+```
+
+위는 Service의 매니페스트 파일이다. selector를 통해 띄운 pod를 참조하고 있다. 그리고 해당 서비스는 80 포트로 노출시키고 프로토콜은 TCP이다.  해당 서비스로 들어온 요청은 8080 포트로 포워딩하고 있다.
+
+하지만 이 서비스는 아직 외부 서비스에 노출되고 있지 않다.
+External-ip를 보면 아직 할당되지 않았다. 이 말은 클러스터 내부에서만 이 서비스에 접근 가능하다는 것이다. 그렇다면 이 서비스를 어떻게 노출시킬까?
+
 # ingress
 
 일반적으로, 네트워크 트래픽은 Ingress와 egress로 구분된다.
@@ -60,3 +84,4 @@ Ingress Controller를 직접 운영할지, 클라우드 플랫폼에 위임할�
 - https://blog.naver.com/alice_k106/221502890249
 - https://arisu1000.tistory.com/27840
 - https://bcho.tistory.com/1263
+- https://coding-start.tistory.com/309

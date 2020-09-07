@@ -78,11 +78,15 @@ spec:
 
 Ingress를 정의하는 YAML 파일은 매우 간단하다. {호스트명} 으로 접근하는 네트워크 요청에 대해서 Ingress 규칙을 적용하되, http 프로토콜을 통해 /api/hostname-service 라는 경로로 접근하는 요청을 hostname-service라는 이름의 Service의 80 포트로 전달하라는 뜻이다. 
 
-그러나 위의 YAML 파일로 Ingres를 생성해도 아무 일도 일어나지 않는다. Ingress는 단지 Ingress 규칙을 정의하는 선언적인 오브젝트일 분 외부 요청을 받아들이는 실제 서버가 아니기 때문이다. Ingress는 Ingress Controller라고 하는 특수한 서버 컨테이너에 적요되어야만 Ingress 에 적용된 규칙이 활성화 된다. 
+그러나 위의 YAML 파일로 Ingres를 생성해도 아무 일도 일어나지 않는다. Ingress는 단지 Ingress 규칙을 정의하는 선언적인 오브젝트일 분 외부 요청을 받아들이는 실제 서버가 아니기 때문이다. Ingress는 Ingress Controller라고 하는 특수한 서버 컨테이너에 적요되어야만 Ingress 에 적용된 규칙이 활성화 된다. 즉 Ingress Controller가 외부로부터 네트워크 요청을 수신했을 때, Ingress 규칙에 기반해 이 요청을 어떻게 처리할지를 결정한다.
+
+그렇다면, Ingress Controller를 어떻게 설치해 실행할 수 있을까?
 
 - Ingress Controller
 
 Ingress Controller를 직접 운영할지, 클라우드 플랫폼에 위임할지에 따라서 고민할 필요가 있다. 직접 Ingress Controller를 구동하려면 Nginx Ingress Controller를 사용할 수 있고, 클라우드 플랫폼에 위임하려면 GKE의 기능을 사용 가능하다.
+
+만약 AWS에서 EKS 또는 EC2 기반의 Kubespray를 사용하고 있다면, Nginx Ingress Controller를 직접 생성해 사용하되, 외부에서 Nginx에 접근하기 위한 쿠버네티스 Service를 Load Balancer 타입으로 설정해 Load Balancer를 생성하는 방법을 생각해 볼 수 있다. 이 때, ELB / NLB / ALB 중 어느 로드 밸런서를 
 
 
 

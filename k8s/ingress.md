@@ -437,6 +437,10 @@ spec:
 
 Ingress Controller를 생성했다면, 외부 네트워크 요청에 대한 처리를 정의하는 Ingress 규칙을 생성한다. 
 
+```
+$ kubectl apply -f ingress.yaml
+```
+
 ingress.yaml
 
 ```
@@ -457,6 +461,16 @@ spec:
           serviceName: hostname-service
           servicePort: 80
 ```
+
+위의 Ingress 규칙은 매우 단순하고 간단하다. /echo-hostname 경로로 접근하는 요청을 hostname-service 서비스의 80 포트로 전달한다. Nginx Ingress Controller를 생성해 둔 상태에서 Ingress를 생성하면 자동으로 Ingress 규칙이 Nginx 에 적용된다.
+
+미리 생성해 두었던 hostname-service는 80 포트로 서비스 요청을 받아들이고 있다. 만약 hostname-service의 ClustIP의 80 포트로 요청을 보내면 요청을 처리하는 Endpoint의 Pod 컨테이너 호스트이름이 반환될 것이다.
+
+```
+$ kubectl get service
+```
+
+Nginx Ingress Controller는 쿠버네티스로부터 Ingress 생성을 watch하고 있으므로, Ingress가 생성되면 자동으로 Nginx에 등록된다.
 
 
 

@@ -472,7 +472,54 @@ $ kubectl get service
 
 Nginx Ingress Controller는 쿠버네티스로부터 Ingress 생성을 watch하고 있으므로, Ingress가 생성되면 자동으로 Nginx에 등록된다.
 
+- Ingress Controller에 접근하기 위한 EndpointIP 설정하기
 
+Nginx도 Ingress 규칙도 생성했지만, Ingress를 테스트하기 위해서 아직 외부에서 서비스를 받을 수 있는 상태는 아니다. 위에서 사용했던 Nginx Ingress Controller를 정의하는 공식 YAML 파일 (mandatory.yaml)에는 Nginx의 Deployment만이 작성되어 있을 뿐, 이를 외부로 노출하기 위한 Service는 아직 생성하지 않았기 때문이다. Nginx를 외부로 노출하려면,  즉 Ingress 규칙을 써먹기 위해 /echo-hostname의 Endpoint를 외부에 제공하기 위해서는 별도의 Service를 생성해줘야 한다.
+
+Ingress Controller를 위한 Service는 AWS나 Openstack에서 동적으로 생성해 사용할 수 있는 Load Balancer 타입을 사용하는 것이 일반적이다.
+on-premice 일반 서버 환경은 Load Balancer 타입을 사용할 수 없으며 다른 종류의 Service를 사용해야 한다.
+
+- NodePort의 Service를 사용한다.
+
+가장 직관적이고 쉽게 사용할 수 있는 방법이다. NodePort를 사용하면 모든 Worker 노드에 동일한 포트를 개방하고, 각 Worker 노드의 IP와 NodePort의 포트로 Ingress Controller에 접근할 수 있다. AWS 상에서 쿠버네티스 클러스터를 운영하고 있다면, Static한 NodePort를 개방한 뒤, ELB/NLB를 붙이는 것을 생각해 볼 수 있겠으나, 지금은 AWS를 사용하지 않는 것을 전제 조건으로 한다.
+
+이에 대한 대안으로써, kube-apiserver의 --service-node-port를 80-33000과 같이 설정한 뒤 Nginx Service의 NodePort를 80으로 설정하고, DMZ에서 리버스 프록시 역할을 하는 Worker 노드 몇 개를 선택해 Public IP를 부여함으로써 외부에 서비스를 제공하는 방식도 생각해 볼 수 있다. 그러나, 0~1024 까지의 포트는 시스템 관리자에 의해 예약된 (Well-known)포트이며,  이를 침범하는 설정을 썩 좋아보이지 않는다.
+
+또는 LB 기능이 탑재된 물리 네트워크 장비를 Front 단에 배치히키고 Nginx의 Servic를 통해 설정된 Endpoint를 LB에 등록하는 방식도 가능하다. 그러나 DNS RR 등을 사용해 로드 밸런서를 한다고 쳐도, 노드의 장애까지 감지할 수 있는 Health Check를 스위치에서 제공해야만 완벽한 서비스 구성이 가능할 것이다. 이 경우, etcd, consul 등을 이용해 Pod 또는 Worker 노드의 장애를 감지해야 하는 시나리오까지 구상해야 한다.  직접 구축하는 것은 어렵다.
+
+Ingress-svc-nodeport.yaml을 통해 Service 파일을 생성하자
+30000 NodePort를 사용한다.
+
+vim ingress-svc-nodeport.yaml
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-nginx
+  namespace: ingress-nginx
+spec:
+  ports:
+    - name: service
+      port: 80
+      targetPort: 80
+      nodePort: 30000
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  type: NodePort
+```
+
+적용
+
+```
+$ kubectl apply -f ingress-svc-nodeport.yaml
+```
+
+생성 뒤 호스투명으로 worker 노드의 30000 포트로 접근하면 정상적인 응답을 확인할 수 있다.
+
+$ curl --resolve alicek106.example.com:30000:10.43.0.30 \
+  alicek106.example.com:30000/echo-hostname
 
 ## ref
 - https://blog.naver.com/alice_k106/221502890249

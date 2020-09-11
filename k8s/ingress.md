@@ -78,7 +78,7 @@ spec:
 
 Ingress를 정의하는 YAML 파일은 매우 간단하다. {호스트명} 으로 접근하는 네트워크 요청에 대해서 Ingress 규칙을 적용하되, http 프로토콜을 통해 /api/hostname-service 라는 경로로 접근하는 요청을 hostname-service라는 이름의 Service의 80 포트로 전달하라는 뜻이다. 
 
-그러나 위의 YAML 파일로 Ingres를 생성해도 아무 일도 일어나지 않는다. Ingress는 단지 Ingress 규칙을 정의하는 선언적인 오브젝트일 분 외부 요청을 받아들이는 실제 서버가 아니기 때문이다. Ingress는 Ingress Controller라고 하는 특수한 서버 컨테이너에 적요되어야만 Ingress 에 적용된 규칙이 활성화 된다. 즉 Ingress Controller가 외부로부터 네트워크 요청을 수신했을 때, Ingress 규칙에 기반해 이 요청을 어떻게 처리할지를 결정한다.
+그러나 위의 YAML 파일로 Ingres를 생성해도 아무 일도 일어나지 않는다. Ingress는 단지 Ingress 규칙을 정의하는 선언적인 오브젝트일 분 외부 요청을 받아들이는 실제 서버가 아니기 때문이다. Ingress는 Ingress Controller라고 하는 특수한 서버 컨테이너에 적용되어야만 Ingress 에 적용된 규칙이 활성화 된다. 즉 Ingress Controller가 외부로부터 네트워크 요청을 수신했을 때, Ingress 규칙에 기반해 이 요청을 어떻게 처리할지를 결정한다.
 
 그렇다면, Ingress Controller를 어떻게 설치해 실행할 수 있을까?
 

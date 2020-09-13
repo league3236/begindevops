@@ -3,3 +3,4 @@
 ./k8s/imgs/yaml/swarm.yaml
 ./k8s/realha.md
 ./k8s/azurehatest.md
+./terraform/web_infra/provider.tf

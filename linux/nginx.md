@@ -50,3 +50,11 @@ node.js의 비동기방식의 싱글스레드는 아래와 같다.
 ![event-driven](./imgs/event-driven.png)
 
 쓰레드 기반은 하나의 커넥션당 하나의 쓰레드를 잡아 먹지만 이벤트 드라이븐 방식은 여러개의 커넥션을 몽땅 다 Event Handler를 통해 비동기 방식으로 처리해 먼저 처리되는 것부터 로직이 진행되게끔 한다.
+
+- CPU Bound와 I/O Bound 
+
+CPU Bound : CPU 자운을 사용하는 일들을 처리하는 일들
+I/O Bound : Disk, Network, DataBase와 관련된 일들
+
+CPU Bound의 경우, node.js의 V8 엔진에서 처리되며 I/O Bound를 제외한 Javascript 코드들이 이에 해당된다. I/O Bound의 경우, 그 외의 해당하는 일들인,  fileSystem, DataBase, Network가 포함되며 보통 이에 관련된 일들이 벌어진다면, Event Queue에 등록되고 Event Loop에 의해 처리되게 된다.
+

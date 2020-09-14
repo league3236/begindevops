@@ -26,6 +26,8 @@ Terraform으로 구성하려면 웹 콘솔보다 훨씬 세부적인 리소스�
 > export AWS_ACCESS_KEY_ID={access key 값}
 > export AWS_SECRET_ACCESS_KEY={secret key 값}
 
+> export AWS_DEFAULT_REGION="ap-northeast-2"             # region
+
 - AMI
 AMI(Amazon Machine Image)는 EC2 인스턴스를 구동시키는 골드 이미지이다.
 예제의 ami-40d28157은 us-east-1의 ubuntu 16.04 값이다.

@@ -106,3 +106,9 @@ CPU Bound의 경우, Node.js의 V8 엔진에서 처리되며 I/O Bound를 제외
 Apache도 나름 좋은 점이 있지만 서버의 자원 활용도 능력으로 보면 nginx가 좋다. 한 개의 커넥션당 하나의 쓰레드는 자원을 너무 많이 잡아먹는다. 
 
 node.js의 창시자 라이언 달은 nginx를 proxy server 앞단에 놓고 node.js를 뒤쪽에 놓는게 버퍼 오버플로우 취약점에 의한 공격을 어느정도 방지한다고 하였다. 익명의 사용자의 직접적인 Web Server로의 접근을 차단하고 간접적으로 한 단계를 더 거침으로써 보안적인 부분을 처리할 수 있다.
+- CPU Bound와 I/O Bound 
+
+CPU Bound : CPU 자운을 사용하는 일들을 처리하는 일들
+I/O Bound : Disk, Network, DataBase와 관련된 일들
+
+CPU Bound의 경우, node.js의 V8 엔진에서 처리되며 I/O Bound를 제외한 Javascript 코드들이 이에 해당된다. I/O Bound의 경우, 그 외의 해당하는 일들인,  fileSystem, DataBase, Network가 포함되며 보통 이에 관련된 일들이 벌어진다면, Event Queue에 등록되고 Event Loop에 의해 처리되게 된다.

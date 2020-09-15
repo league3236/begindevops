@@ -277,7 +277,138 @@ spec:
       nodePort: 30500
 ```
 
+위의 매니페스트로 Pod와 Service를 생성하면 **sudo iptables -S -t nat** 명령어를 통해 아래와 같이 해당 노드에 설정되어있는 NAT 테이블을 조회할 수 있다.
 
+여기에서는 이전에 ClusterIP 타입의 서비스를 생성해서 확인해봤던 것과는 조금 다른 것을 확인할 수 있다.
+
+NodePort 타입의 Service에서는 추가적으로 **KUBE-NODEPORTS**라는 체인 룰이 추가되었다.
+
+외부에서 들어오는 트래픽이 이 체인 룰을 타고 NAT가 적용되어 Service가 포워딩하는 Pod들로 트래픽을 전달하도록 되어있다.
+
+### Load Balancer
+
+AWS나 Azure 같은 외부 클라우드 서비스를 사용하여 로드밸런서를 프로비저닝 할 수 있는 경우에 사용할 수 있는 Service 타입이다.
+
+로드밸런서의 실제 생성은 비동기적으로 수행되며 프로비저닝 될 로드밸런서에 대한 정보는 Service의 .status.loadbalancer 필드에 작성된다. 예를들면 아래와 같다.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+    - protocol: TCP
+      port: 80
+      tartgetPort: 9736
+  clusterIP: 10.0.171.239
+  type: LoadBalancer
+status:
+  loadBalncer: # 여기에 로드밸런서에 대한 내용 추가
+    ingress:
+    - ip: 192.0.2.127
+```
+
+외부 로드밸런서의 트래픽은 클러스터 내의 Pod로 전달된다.
+
+클라우드 서비스를 제공하는 업체(AWS, GCP 등)는 로드밸런서의 동작을 결정한다.
+
+일부 클라우드 서비스 제공 업체에서는 LoadBalancerIP를 지정할 수 있다.
+
+이경우에는 지정된 LoadBalancerIP로 로드밸런서가 생성된다.
+loadBalancerIP가 지정되지 않은 로드밸런서는 임시 IP주소로 설정된다.
+
+만약 클라우드 서비스 제공업체가 LoadBalancerIP를 지원하지 않는다면, LoadBalacerIP를 설정한 필드는 무시된다.
+
+## Ingress
+
+Ingress란 리버스 프록시를 통해 클러스터 내부 Service로 어떻게 패킷을 포워딩 시킬 것인지 명시한 쿠버네티스 리소스이다.
+
+Ingress는 Ingress Controller와 짝지어진다.
+
+모든 Ingress Controller는 참조 사양에 맞아야 한다.
+
+Ingress Controller는 다양하게 있으며, 대중적으로 많이 사용하는 Ingress Controller는 nginx-ingress이다.
+
+nginx ingress controller는 ingress 리소스를 읽어서 그에 맞는 리버스 프록시를 구성한다.
+
+eks ingress는 ingress 리소스를 읽어서 그에 맞는 리버스 프록시를 구성하기 위해 Application Load Balancer 및 필수 지원 AWS 리소스가 만들어지도록 트리거하는 컨트롤러이다.
+
+```
+# Hello world Server Pod
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: service-test
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: service_test_pod
+  template:
+    metadata:
+      labels:
+        app: service_test_pod
+    spec:
+      containers:
+      - name: simple-http
+        image: python:2.7
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash"]
+        args: ["-c", "echo \\"<p>Hello from $(hostname)</p>\\" > index.html; python -m SimpleHTTPServer 8080"]
+        ports:
+        - name: http
+          containerPort: 8080
+---
+# Hello world Server Service
+apiVersion: v
+kind: Service
+metadata:
+  name: service-test
+spec:
+  selector:
+    app: service_test_pod
+  ports:
+    - protocol: TCP
+      port: 80
+      tartgetPort: 8080
+---
+# Hello world Server Ingress
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test-ingress
+spec:
+  rules:
+  - host: nginx.example.com
+    http:
+      paths:
+      - backend:
+          serviceName: sevice-test
+          servicePort: 80
+---
+# Hello wolrld Server Ingress Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress
+  namespace: nginx-ingress
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: nginx-ingress
+```
 
 # network plugin
 

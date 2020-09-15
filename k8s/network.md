@@ -2,6 +2,8 @@
 
 - https://medium.com/finda-tech/kubernetes-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%EC%A0%95%EB%A6%AC-fccd4fd0ae6
 - http://melonicedlatte.com/network/2020/04/28/201100.html
+- https://m.blog.naver.com/PostView.nhn?blogId=alice_k106&logNo=221574467441&proxyReferer=https:%2F%2Fwww.google.com%2F
+- https://ikcoo.tistory.com/11 (중요)
 
 # Network
 
@@ -187,7 +189,97 @@ https://medium.com/finda-tech/kubernetes-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%E
 
 참고해서 더 작성해야함..
 
+## 외부와 Service 간의 통신
 
+**External to Service**
+
+앞에서 Service와 Service 네트워크에 대해서 확인해 보았다.
+
+Service란, Pod로 액세스 할 수 있는 정책을 정의하는 추상화된 개념이다. Kubernetes 리소스 타입 중 하나로 각 Pod로 트래픽을 포워딩 해주는 프록시 역할을 한다.
+
+이 때 selector라는 것을 이용하여 트래픽을 전달받을 Pod들을 결정한다.
+
+Service 네트워크는 Service가 할당받는 인터페이스이다.
+
+모든 Service는 기본적으로 Cluster-IP라는 IP 주소를 부여받으며,  클러스터 내부적으로 이 IP 주소를 통해 자신이 포워딩해야할 Pod들에게 트래픽을 전달한다.
+
+즉, 기본적으로 Service는 클러스터 내부적으로만 통신할 수 있게끔 설계 되어 있다. 
+
+하지만 Pod는 외부로토 통신이 되어야 한다.
+
+따라서 Service는 여러가지 타입을 통해 외부 통신을 가능하게끔 기능을 제공한다.
+
+아래는 Service에서 외부 통신을 가능하게 해주는 Service 타입이다.
+
+- NodePort
+- Load Balancer
+
+### NodePort
+
+NodePort 타입의 서비스는 기본적으로 ClusterIP 타입 (default)과 동일하지만 몇가지 기능을 더 가지고 있다.
+
+NodePort 타입 서비스는 노드 네트워크의 IP를 통하여 접근할 수 있을뿐만 아니라 ClusterIP로도 접근이 가능하다.
+
+이것이 가능한 이유는 간단하다.
+
+쿠버네티스가 NodePort 타입의 서비스를 생성하면 kube-proxy가 각 노드의 eth0 네트워크 interface에 30000-32767 포트 사이의 임의의 포트를 할당한다. (그렇기 때문에 이름이 NodePort 이다.)
+
+그리고 할당된 포트로 요청이 오게 되면 이것을 매핑된 ClusterIP로 전달한다. (실제로 따져보자면 ClusterIP로 전달하는 것이 아니라 ClusterIP를 통해 포워딩되는 netfilter 체인 룰로 NAT가 적용되는 것이다.)
+
+아래 그림과 같이 동작한다고 불 수 있다.
+
+![network4](./imgs/network4.png)
+
+아래는 간단한 hello world를 출력하는 웹 서버 Pod를 4개 띄워서 NodePort 타입의 Service에 대한 NAT table을 어떻게 구성하는지 볼 수 있는 예제이다.
+
+아래의 deployment와  service 매니페스트를 사용하여 테스트한다.
+
+```
+# Hello world Server Pod
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: service-test
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: service_test_pod
+  template:
+    metadata:
+      labels:
+        app: service_test_pod
+    spec:
+      containers:
+      - name: simple-http
+        image: python:2.7
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash"]
+        args: ["-c", "echo \\"<p>Hello from $(hostname)</p>\\" > index.html; python-m SimpleHTTPServer 8080"]
+        ports:
+        - name: http
+          containerPort: 8080
+___
+# Hello world Server Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-test
+spec:
+  type: NodePort
+  selector:
+    app: service_test_pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: http
+      nodePort: 30500
+```
+
+
+
+# network plugin
 
 
 

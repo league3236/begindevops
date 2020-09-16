@@ -1,6 +1,8 @@
 
 # REF
 - https://arisu1000.tistory.com/27859
+- https://kubernetes.io/ko/docs/tasks/administer-cluster/coredns/
+
 
 # 쿠버네티스 DNS
 
@@ -11,6 +13,45 @@ ip로 통신하도록 되어있다면 한곳에 세팅해놨던 yaml 파일을 �
 그 뿐만 아니라 일부의 경우에는 서비스디스커버리(service discovery) 용도로 사용할 수 있다. 전문적인 서비스디스커버리를 사용하려면 dns가 아니라 다른 솔루션들을 사용해야 하겠지만 간단한 경우라면 dns를 이용해서 할 수도 있다. 
 
 특정 pod들에 접근하려할때 도메인을 통해서 접근하도록 설정되어 있다면 pod에 문제가 생겨서 재생성되거나 배포때문에 재생성될때 IP가 변경되더라도 자동으로 도메인에 변경된 pod의 IP가 등록되기 때문에 자연스레 새로 시작된 pod 쪽으로 연결하는 것이 가능하다
+
+## 서비스 디스커버리를 위해 CoreDNS 사용하기
+
+CoreDNS를 사용하기 위해서는 kubectl 버전이 1.9v 이상이여야 한다.
+
+### CoreDNS 소개
+
+CoreDNS는 쿠버네티스 클러스터의 DNS 역할을 수행할 수 있는, 유연하고 확장 가능한 DNS 서버이다. 쿠버네티스와 동일하게, CoreDNS 프로젝트도 CNCF가 관리한다.
+
+사용자는 기존 디플로이먼트인 kube-dns를 교체하거나, 클러스터를 배포하고 업그레이드하는 kubeadm과 같은 툴을 사용하여 클러스터 안의 kube-dns대신 CoreDNS를 사용할 수 있다.
+
+### CoreDNS 설치
+
+https://github.com/coredns/deployment/tree/master/kubernetes
+
+- deploy.sh 및 core.yaml.sed
+
+deploy.sh 는 kube-dns가 실행중인 클러스터에서 CoreDNS를 실행하기 위한 매니페스트를 생성하는 편리한 스크립트이다.
+
+coredns.yaml.sed 파일을 템플릿으로 사용하여 ConfigMap 및 CoreDNS 배포를 생성 한 다음 CoreDNS 배포를 사용하도록 Kube-DNS 서비스 선택기를 업데이트 한다. 기존 서비스를 재사용하는 방식이므로 서비스 요청에 지장을 주지 않는다.
+
+기본적으로 배포 스크립트는 기존 kube-dns 구성도 동등한 CoreDNS Corefile로 변환시킨다. -s 옵션을 제공하면 배포 스크립트가 kube-dns에서 CoreDNS로의 ConfigMap 변환을 진행한다.
+
+해당 스크립트에서 kube-dns deployment나 replication을 자동으로 삭제해주지는 않는다. CoreDNS로 배포한뒤 수동으로 kube-dns를 삭제해 주어야 한다.
+
+manifest를 먼저 깊게 검토하고 해당 클러스터에 맞는지 체크해야한다. 클러스터의 버전과 구축법에 따라 매니페스트 일부를 수정해야 할 수 있다.
+
+kube-dns를 coredns로 교체하는데 필요한 명령은 아래와 같다.
+
+```
+$ ./deploy.sh | kubectl apply -f -
+$ kubectl delete --namespace=kube-system deployment kube-dns
+```
+
+non_BRAC deployment에서는 아래의 내용을 따른다.
+
+1. Remove the line serviceAccountName: coredns from 2. the Deployment section.
+Remove the ServiceAccount, ClusterRole, and ClusterRoleBinding sections.
+
 
 ## 클러스터내에서 도메인사용해보기
 

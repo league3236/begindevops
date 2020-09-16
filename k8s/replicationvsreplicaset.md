@@ -64,9 +64,9 @@ vim으로 파일 수정
 
 ## Replica Set
 
-- 쿠버네티스 1.8 버전부터 
-
-
+- 쿠버네티스 1.8 버전부터 Deployment,  Daemonset,  ReplicaSet, StatefulSet API가 베타로 업데이트되고, 1.9 버전부터 정식으로 업데이트 됨
+- 레플리카셋은 레플리케이션컨틀롤러를 완전히 대체 가능
+- 일반적으로 레플리카셋을 직접 생성하지 않고 상위 수준의 디플로이먼트 리소스를 만들 때 자동으로 생성
 
 
 # replicaset 과 replication controller 비교

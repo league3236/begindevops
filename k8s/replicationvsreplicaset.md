@@ -1,3 +1,5 @@
+
+
 # replica set 과 replication controller 비교
 
 replica set은 replication controller와 똑같이 동작하지만 더 풍부한 표현식 pod selector를 갖는다.

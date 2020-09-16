@@ -8,6 +8,12 @@ Namespace는 서로 중첩될 수 없으며, 각 쿠버네티스 리소스는 �
 
 Namespace는 클러스터 자원을 여러 사용자 사이에서 나누는 방식이다.
 
+Resources를 분리된 영역으로 나눌 수 있는 방법
+다수 Namespaces를 사용하여 복잡한 쿠버네티스 시스템을 더 작은 그룹으로 분할
+  - Namespaces 내에서 resource 이름을 고유하게 사용 가능
+  - Resources를 생산, 개발, QA 등 환경으로 분리하여 사용 가능
+다른 사용자와 분리된 환경으로 타입의 접근 제한 가능
+
 - namespace 조회
 ```
 $ kubectl get namespace
@@ -18,6 +24,9 @@ kube-node-lease   Active   1d
 kube-public       Active   1d
 kube-system       Active   1d
 ```
+
+**kubectl delete all -all 명령어를 사용해도 default namespaces에서만 수행되게끔 되어있다.**
+
 
 쿠버네티스는 처음에 4개의 네임스페이스를 갖는다.
 1. default : 기본 오브젝트의 namespace
@@ -43,6 +52,7 @@ $ kubectl apply -f namespace.yaml
 $ kubectl get namespace
 $ kubectl describe namespace league
 ```
+
 
 ## ref
 - https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/namespaces/

@@ -24,6 +24,8 @@ CoreDNS는 쿠버네티스 클러스터의 DNS 역할을 수행할 수 있는, �
 
 사용자는 기존 디플로이먼트인 kube-dns를 교체하거나, 클러스터를 배포하고 업그레이드하는 kubeadm과 같은 툴을 사용하여 클러스터 안의 kube-dns대신 CoreDNS를 사용할 수 있다.
 
+Service를 생성하면 대응하는 DNS entry가 생성된다.
+
 ### CoreDNS 설치
 
 https://github.com/coredns/deployment/tree/master/kubernetes
@@ -52,8 +54,59 @@ non_BRAC deployment에서는 아래의 내용을 따른다.
 1. Remove the line serviceAccountName: coredns from 2. the Deployment section.
 Remove the ServiceAccount, ClusterRole, and ClusterRoleBinding sections.
 
+### kube-dns로 롤백하기
+
+CoreDNS를 실행하는 Kubernetes 클러스터를 ㅏube-dns로 되돌리려는 경우 rollback.sh 스크립트를 진행한다.
+
+```
+$ ./rollback.sh | kubectl apply -f -
+$ kubectl delete  --namepsace=kube-system deployment coredns
+```
+
+
 
 ## 클러스터내에서 도메인사용해보기
+
+### 형식
+
+`{Service 명}.{Namespace 명}.svc.cluster.local`
+
+### 예시
+
+1. Pod조회
+
+```
+$ kubectl get pod
+NAME                                      READY   STATUS    RESTARTS   AGE
+pod/http-go-5c6f458dc9-wtpdq              1/1     Running   0          7m31s
+```
+
+2. Pod 내부 접속
+
+```
+$ kubectl exec -it http-go-5c6f458dc9-wtpdq -- bash
+```
+
+3. DNS를 활용한 Service 검색 1
+
+```
+root@http-go-5c6f458dc9-wtpdq:/usr/src/app# curl http-go-svc 
+Welcome! http-go-5c6f458dc9-wtpdq
+```
+
+4. DNS를 활용한 Service 검색 2 - svc.cluster.local 생략가능
+
+```
+root@http-go-5c6f458dc9-wtpdq:/usr/src/app# curl http-go-svc.default
+Welcome! http-go-5c6f458dc9-wtpdq
+```
+
+5. DNS를 활용한 Service 검색 3 - default Namespace 생략 가능
+
+```
+root@http-go-5c6f458dc9-wtpdq:/usr/src/app# curl http-go-svc
+Welcome! http-go-5c6f458dc9-wtpdq
+```
 
 쿠버네티스에서 사용하는 내부 도메인은 service와 pod에 대해서 사용할 수 있고 일정한 패턴을 가지고 있다.
 
@@ -276,4 +329,8 @@ nslookup: can't resolve 'mysql-cluster-ip-service.default.svc.cluster.local': Tr
 command terminated with exit code 1
 ```
 
-이슈 파악중 08/26
+확인을 해보니 서버의 방화벽 문제로 파악 
+
+iptable로 NodePort의 방화벽 해지
+
+## CoreDNS 기능 

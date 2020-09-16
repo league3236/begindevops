@@ -139,7 +139,7 @@ $kubeadm init phase upload-certs --upload-certs
 ```
 
 ```
-kubeadm join {ip}:6443 --token {token} --discovery-token-ca-cert-hash sha256:{sha-key} --control-plane --certificate-key {certificate-key}
+kubeadm join {ip}:{port} --token {token} --discovery-token-ca-cert-hash sha256:{sha-key} --control-plane --certificate-key {certificate-key}
 ```
 
 - kube 삭제

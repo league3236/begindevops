@@ -333,4 +333,48 @@ command terminated with exit code 1
 
 iptable로 NodePort의 방화벽 해지
 
-## CoreDNS 기능 
+## CoreDNS 기능
+
+- 내부에서 DNS 서버 역할을 하는 Pod가 존재
+- 각 미들웨어를 통해 로깅, 캐싱, Kubernetes 질의하는 등의 기능을 가짐
+
+![dns1](./imgs/dns.png)
+
+- 해당 DNS에는 `configmap` 저장소를 사용해 설정 파일을 컨트롤
+
+```
+$ kubectl get configmap coredns -n kube-system -o yaml
+
+apiVersion: v1
+data:
+  Corefile: |   #ns 지정
+    .:53 {
+      errors
+      health {
+        lameduck 5s
+      }
+      ready
+      kubernetes cluster.local inaddr.arpha ip6.arpa {
+        pods insecure
+        fallthrough in-addr.arpha ip6arpa
+        ttl 30
+      }
+      prometheus :9153
+      forward . /etc/resolv.conf {
+        max_concurrent 1000
+      }
+      cache 30
+      loop
+      reload
+      loadbalance
+    }
+    중략
+```
+
+Pod에서도 Subdomain을 사용하면 DNS 서비스 사용이 가능하다.
+
+- 원래 CoreDNS는 Service까지만 조회 가능했으나, Pod에서도 Subdomain을 사용하면 DNS 서비스 사용 가능하다.
+- yaml 파일의 hostname은 Pod의 `metadata.name`의 value를 따름 (필요한 경우 hostname을 따로 선택 가능)
+- `subdomain` objet는 서브 도메인을 지정하는데 사용 -> 서브 도메인을 지정하면 FQDN 사용 가능
+  - FQDN 형식 : {hostname}.{subdomain}.{namespace}.svc.cluster-domain.example
+  - FQDN 예시 : busybox-1.default-subdomain.default.svc.cluster-domain.example

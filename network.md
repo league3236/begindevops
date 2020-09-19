@@ -131,3 +131,24 @@ VLAN 포트간 스위칭 기능을 제공하고, 서로 다른 VLAN 포트간에
 - 전달해야할 데이터
 - 네트워크에게 이 패킷으로 무엇을 해야하는지 알려주는 제어정보를 갖고 있음
 
+## Port Number
+
+- FTP(File Transfer Protocol)  : 21
+- Telnet : 23
+- SMTP(Simple Mail Transfer) : 25
+- DNS(Domain Name Service) : 53
+- HTTP(Hyper Text Transfer) : 80
+- POP3(Post Office Protoco 3) : 110
+- SNMP(Simple Network Management) : 161
+- TFTP(Trival File Transfer) : 69
+- NNTP(Network News Transfer) : 119
+
+## Networking 명령어
+
+- ipconfig : TCP/IP의 등록정보 및 구성을 알 수 있음
+- nbtstat - +nbt=netbios 같은 ip를 쓰는 컴퓨터 주소들을 알 수 있음 (한 ip에 두대 이상의 컴퓨터면 에러)
+- nslookup = 도메인 서버에 도메인 이름이나 ip 주소를 질의
+- tracert = 목적지까지 가는 라우터의 주소 및 상태를 알 수 있음
+- netstat = 외부에서 통신이 안될대 접속되어 있는 Port를 확인
+- ping = 속도체크 / 상태체크
+

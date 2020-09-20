@@ -3,7 +3,7 @@
 - https://peemangit.tistory.com/7
 - https://brownbears.tistory.com/190
 - https://m.blog.naver.com/PostView.nhn?blogId=suin2_91&logNo=221233074959&proxyReferer=https:%2F%2Fwww.google.com%2F
-
+- https://noahlogs.tistory.com/47
 
 # 네트워크
 
@@ -160,6 +160,7 @@ IP는 IP 주소라는 32비트로 된 식별번호를 사용하여 컴퓨터를 
 
 ## 서브넷 마스크란?
 
-1. 서브네팅이란? (Subnetting)
+서브네팅이란? (Subnetting)
+
 
 서브넷마스크를 알기 위해선 먼저 서브네팅 개념을 이해해야한다. 서브네팅은 `네트워크 관리자가 네트워크 성능을 향상시키기 위해, 자원을 효율적으로 분배하는 것이다. 여기서 자원을 효율적으로 분배한다는 것은 네트워크 영역과 호스트 영역을 분할하는 것이라고 생각하면된다.` 네트워크적인 측면에서 말하자면, 너무 큰 브로드캐스트 도메인은 네트워크 환경에서 패킷전송을 느리게 하고 성능저하를 발생시킨다. 따라서 네트워크를 쪼개서 통신 성능을 보장하는 것이다.

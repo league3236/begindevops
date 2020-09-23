@@ -4,7 +4,7 @@
 
 # 볼륨
 
-
+컨테이너의 on-disk file 은 일시적이므로 몇 가지 문제가 발생한다. 첫째, 컨테이너가 충돌하면 Kubelet이 해당 container를 restart를 하지만 파일이 손상된다.  둘째, 컨테이너를 실행할때 pod간에 파일을 공유해야 하는 경우가 많다. Kubernetes `Volume`은 이러한 문제를 해결 가능하다.
 
 
 #  NFS 볼륨

@@ -63,8 +63,6 @@ $ ./rollback.sh | kubectl apply -f -
 $ kubectl delete  --namepsace=kube-system deployment coredns
 ```
 
-
-
 ## 클러스터내에서 도메인사용해보기
 
 ### 형식

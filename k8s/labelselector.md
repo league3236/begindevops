@@ -15,7 +15,7 @@ example)
 $ kubectl label nodes gs-hci-vm-auth app=auth
 ```
 
-- lable 확인
+- label 확인
 ```
 $ kubectl get nodes --show-labels
 ```

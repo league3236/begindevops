@@ -34,11 +34,52 @@ HCL은 테라폼에서 사용하는 설정 언어입니다. 테라폼에서 모�
 $brew install terraform
 ```
 
-버전 체크
+## 사용법
+
+- 버전 체크
+
 ```
 $terraform version
 ```
 
+- 환경변수 (aws)
+
+```
+$export AWS_ACCESS_KEY_ID={액세스키 id}
+$export AWS_SECRET_ACCESS_KEY={비밀 액세스 키}
+```
+
+- 기본적인 테라폼 리소스의 문법
+
+PROVIDER는 아마존 웹 서비스 처럼 공급자의 이름, TYPE은 instance와 같이 생성하고자 하는 리소스의 종류, NAME은 테라폼에서 해당 리소스를 지칭하는 식별자, CONFIG는 해당 리소스에 선언할 수 있는 하나 이상의 설정 변숫값들로 구성되어있다.
+
+```
+resource "PROVIDER_TYPE" "NAME" {
+    [CONFIG...]
+}
+```
+
+- init
+
+테라폼을 수행하기 위한 공급자의 플러그인들을 초기 설정하는 명령어
+예를 들어, 아마존 웹 서비스의 최신 버전 플로그인 들이 설정된다.
+
+```
+$terraform init
+```
+
+
+- plan 명령을 통한 변경 사항 미리 체크
+
+```
+$terraform plan
+```
+
+- 적용 (main.tf)
+
+```
+$terraform apply
+```
 
 ### ref
 - https://www.44bits.io/ko/post/terraform_introduction_infrastrucute_as_code

@@ -35,6 +35,13 @@ version 확인
 $ /usr/libexec/java_home -V
 ```
 
+설치 위치 체크
+
+```
+$ /usr/libexec/java_home
+/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
+```
+
 example
 ```
 Matching Java Virtual Machines (1):

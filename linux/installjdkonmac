@@ -1,0 +1,34 @@
+
+```
+$ brew tap AdoptOpenJDK/openjdk
+```
+
+```
+$ brew cask install adoptopenjdk8
+```
+
+version 확인
+
+```
+$ /usr/libexec/java_home -V
+```
+
+example
+```
+Matching Java Virtual Machines (1):
+    1.8.0_272, x86_64:	"AdoptOpenJDK 8"	/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
+
+/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
+```
+
+mac에서 위와같이 확인 후 사용할 jdk 버전을 설정가능하다. 
+
+vim ~/.bash_profile
+```
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
+```
+
+적용
+```
+$ source ~/.bash_profile
+```

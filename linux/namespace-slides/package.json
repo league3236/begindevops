@@ -1,0 +1,13 @@
+{
+  "name": "namespace-slides",
+  "version": "1.0.0",
+  "description": "리눅스 커널 Namespace 발표 슬라이드를 PptxGenJS(오픈소스, Node.js)로 코드에서 재현 가능하게 생성하는 스크립트",
+  "main": "generate-slides.js",
+  "scripts": {
+    "build": "node generate-slides.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  }
+}

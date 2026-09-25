@@ -1,0 +1,30 @@
+name: Build namespace-slides pptx
+
+on:
+  push:
+    paths:
+      - "linux/namespace-slides/**"
+      - ".github/workflows/build-namespace-slides.yml"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: linux/namespace-slides
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+      - name: Generate pptx
+        run: npm run build
+      - name: Upload pptx artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: namespace-slides-pptx
+          path: linux/namespace-slides/dist/namespace-slides.pptx
+          if-no-files-found: error
